@@ -3,6 +3,7 @@
 export const API_ENDPOINTS = {
   AUTH: {
     LOGIN: "seller/auth/login",
+    REGISTER: "seller/auth/register",
     REFRESH_TOKEN: "admin/user/refresh-token",
   },
 } as const;

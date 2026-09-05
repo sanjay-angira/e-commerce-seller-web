@@ -7,3 +7,4 @@ export const selectSellerIsAuthenticated = (state: RootState) =>
 export const selectSellerAuthLoading = (state: RootState) =>
   state.sellerAuth.isLoading;
 export const selectSellerAuthError = (state: RootState) => state.sellerAuth.error;
+export const selectSellerSignup = (state: RootState) => state.sellerSignup;

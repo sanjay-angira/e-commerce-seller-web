@@ -24,7 +24,7 @@ export function SellerHomeHero() {
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
-              href="/login"
+              href="/register"
               className="inline-flex items-center gap-2 rounded-lg bg-[#2563eb] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#1d4ed8]"
             >
               Start Selling

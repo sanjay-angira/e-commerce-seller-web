@@ -62,7 +62,7 @@ export function SellerHomeNav() {
                 Login
               </Link>
               <Link
-                href="/login"
+                href="/register"
                 className="rounded-lg bg-[#2563eb] px-4 py-2 text-sm font-semibold text-white hover:bg-[#1d4ed8]"
               >
                 Start Selling
@@ -101,7 +101,7 @@ export function SellerHomeNav() {
               <>
                 <Link href="/login">Login</Link>
                 <Link
-                  href="/login"
+                  href="/register"
                   className="rounded-lg bg-[#2563eb] px-4 py-2 text-center font-semibold text-white"
                 >
                   Start Selling

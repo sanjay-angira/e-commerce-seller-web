@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { STORAGE_KEYS } from "@/services/api/storage";
 
-const PUBLIC_PATHS = new Set(["/", "/login"]);
+const PUBLIC_PATHS = new Set(["/", "/login", "/register"]);
 
 function hasSellerSession(request: NextRequest): boolean {
   return request.cookies.get(STORAGE_KEYS.sellerSession)?.value === "1";
@@ -12,7 +12,7 @@ export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const loggedIn = hasSellerSession(request);
 
-  if (pathname === "/login") {
+  if (pathname === "/login" || pathname === "/register") {
     if (loggedIn) {
       return NextResponse.redirect(new URL("/dashboard", request.url));
     }

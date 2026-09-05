@@ -25,7 +25,7 @@ export function SellerHomePricing() {
         </div>
         <div className="mt-8 text-center">
           <Link
-            href="/login"
+            href="/register"
             className="inline-flex rounded-lg bg-[#2563eb] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#1d4ed8]"
           >
             Start Selling
