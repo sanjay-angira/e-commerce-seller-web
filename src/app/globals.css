@@ -1,0 +1,48 @@
+@import "tailwindcss";
+
+@source "../components/**/*.{tsx,ts}";
+@source "../app/**/*.{tsx,ts}";
+
+@theme {
+  --color-background: #ffffff;
+  --color-foreground: #171717;
+  --color-seller-primary: #c59d5f;
+  --color-seller-primary-hover: #a67c3d;
+  --color-seller-muted: #fcf9f2;
+  --color-seller-border: #c59d5f59;
+  --font-sans: var(--font-geist-sans), "Segoe UI", system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+.bg-seller-primary {
+  background-color: #c59d5f;
+}
+.bg-seller-primary-hover {
+  background-color: #a67c3d;
+}
+.hover\:bg-seller-primary-hover:hover {
+  background-color: #a67c3d;
+}
+.bg-seller-muted {
+  background-color: #fcf9f2;
+}
+.text-seller-primary {
+  color: #c59d5f;
+}
+.border-seller-border {
+  border-color: rgba(197, 157, 95, 0.35);
+}
+.focus\:border-seller-primary:focus {
+  border-color: #c59d5f;
+}
