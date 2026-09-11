@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
-import { ShoppingBag } from "@/components/seller/home/HomeIcon";
+import { SellerBrandLogo } from "@/components/seller/auth/SellerBrandLogo";
 import { NAV_LINKS } from "@/components/seller/home/sellerHome.data";
 import { useSellerAuth } from "@/services/seller/useSellerAuth";
 
@@ -14,20 +14,10 @@ export function SellerHomeNav() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-slate-100 bg-white/95 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 lg:px-6">
-        <Link href="#home" className="flex items-center gap-2.5">
-          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#2563eb] text-white">
-            <ShoppingBag className="h-5 w-5" />
-          </span>
-          <span className="leading-tight">
-            <span className="block text-[15px] font-bold text-[#1e3a8a]">
-              Vrindavan Rasa
-            </span>
-            <span className="block text-[11px] text-slate-500">
-              Sell. Grow. Together.
-            </span>
-          </span>
-        </Link>
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-2.5 sm:gap-4 sm:py-3 lg:px-6">
+        <div className="min-w-0">
+          <SellerBrandLogo />
+        </div>
 
         <nav className="hidden items-center gap-5 text-[13px] font-medium text-slate-600 lg:flex">
           {NAV_LINKS.map((link, index) => (

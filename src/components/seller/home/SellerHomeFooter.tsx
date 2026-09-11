@@ -1,4 +1,4 @@
-import { ShoppingBag } from "@/components/seller/home/HomeIcon";
+import { SellerBrandLogo } from "@/components/seller/auth/SellerBrandLogo";
 import { FOOTER_LINKS } from "@/components/seller/home/sellerHome.data";
 
 const SOCIALS = [
@@ -20,19 +20,7 @@ export function SellerHomeFooter() {
   return (
     <footer id="contact" className="border-t border-slate-100 bg-white">
       <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-8 lg:flex-row lg:items-center lg:justify-between lg:px-6">
-        <div className="flex items-center gap-2.5">
-          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#2563eb] text-white">
-            <ShoppingBag className="h-5 w-5" />
-          </span>
-          <span>
-            <span className="block text-sm font-bold text-[#1e3a8a]">
-              Vrindavan Rasa
-            </span>
-            <span className="block text-[11px] text-slate-500">
-              Sell. Grow. Together.
-            </span>
-          </span>
-        </div>
+        <SellerBrandLogo compact />
         <nav className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-slate-600">
           {FOOTER_LINKS.map((link) => (
             <a key={link.label} href={link.href} className="hover:text-[#2563eb]">

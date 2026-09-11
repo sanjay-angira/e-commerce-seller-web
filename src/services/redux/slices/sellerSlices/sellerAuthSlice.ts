@@ -2,12 +2,16 @@ import { createAsyncThunk, createSlice, type PayloadAction } from "@reduxjs/tool
 import {
   API_ENDPOINTS,
   postData,
+  putData,
   setJson,
   STORAGE_KEYS,
   tokenStorage,
 } from "@/services/api";
 import type { ApiErrorResponse } from "@/services/api/errors";
-import type { Seller } from "@/types/user";
+import {
+  isSellerProfileComplete,
+  type Seller,
+} from "@/types/user";
 
 export interface SellerAuthState {
   seller: Seller | null;
@@ -34,13 +38,40 @@ type SellerLoginResponse = {
     user: {
       id: number;
       email: string;
-      firstName?: string;
-      lastName?: string;
-      profileImage?: string;
+      firstName?: string | null;
+      lastName?: string | null;
+      profileImage?: string | null;
     };
-    seller?: { shopName?: string };
+    seller?: {
+      shopName?: string | null;
+      firstName?: string | null;
+      lastName?: string | null;
+    };
     accessToken: string;
     refreshToken: string;
+  };
+};
+
+export type CompleteSellerProfilePayload = {
+  firstName: string;
+  lastName: string;
+  displayName: string;
+  shopName: string;
+  gstNumber?: string;
+  panNumber?: string;
+};
+
+type SellerProfileResponse = {
+  success: boolean;
+  message?: string;
+  data?: {
+    sellerProfile?: {
+      firstName?: string | null;
+      lastName?: string | null;
+      displayName?: string | null;
+      shopName?: string | null;
+      profileImage?: string | null;
+    };
   };
 };
 
@@ -52,20 +83,40 @@ const initialState: SellerAuthState = {
   error: null,
 };
 
-function mapSellerUser(
-  user: NonNullable<SellerLoginResponse["data"]>["user"],
-  shopName?: string
-): Seller {
+function persistSeller(seller: Seller) {
+  setJson(STORAGE_KEYS.sellerUser, seller);
+  tokenStorage.setSellerProfileComplete(isSellerProfileComplete(seller));
+}
+
+type LoginUser = {
+  id: number;
+  email: string;
+  firstName?: string | null;
+  lastName?: string | null;
+  profileImage?: string | null;
+};
+
+type LoginSeller = {
+  shopName?: string | null;
+  firstName?: string | null;
+  lastName?: string | null;
+};
+
+export function mapSellerUser(user: LoginUser, seller?: LoginSeller): Seller {
+  const firstName = (seller?.firstName || user.firstName || "").trim();
+  const lastName = (seller?.lastName || user.lastName || "").trim();
   return {
     id: String(user.id),
     email: user.email,
-    name: `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim() || user.email,
-    shopName,
+    firstName,
+    lastName,
+    name: `${firstName} ${lastName}`.trim() || user.email,
+    shopName: seller?.shopName?.trim() || undefined,
     avatar: user.profileImage ?? undefined,
   };
 }
 
-function getErrorMessage(error: unknown): string {
+function getErrorMessage(error: unknown, fallback: string) {
   if (error && typeof error === "object" && "message" in error) {
     const message = (error as ApiErrorResponse).message;
     if (message) return message;
@@ -73,7 +124,7 @@ function getErrorMessage(error: unknown): string {
   if (error instanceof Error && error.message) {
     return error.message;
   }
-  return "Login failed. Please check your credentials.";
+  return fallback;
 }
 
 export const loginSeller = createAsyncThunk<
@@ -97,14 +148,56 @@ export const loginSeller = createAsyncThunk<
       return rejectWithValue("Login response did not include tokens");
     }
 
-    const mapped = mapSellerUser(user, seller?.shopName);
+    const mapped = mapSellerUser(user, seller);
     tokenStorage.setSellerAccessToken(accessToken);
     tokenStorage.setSellerRefreshToken(refreshToken);
-    setJson(STORAGE_KEYS.sellerUser, mapped);
+    persistSeller(mapped);
 
     return { seller: mapped, accessToken };
   } catch (error) {
-    return rejectWithValue(getErrorMessage(error));
+    return rejectWithValue(getErrorMessage(error, "Login failed. Please check your credentials."));
+  }
+});
+
+export const completeSellerProfile = createAsyncThunk<
+  Seller,
+  CompleteSellerProfilePayload,
+  { state: { sellerAuth: SellerAuthState }; rejectValue: string }
+>("sellerAuth/completeProfile", async (payload, { getState, rejectWithValue }) => {
+  const current = getState().sellerAuth.seller;
+  if (!current) {
+    return rejectWithValue("Please login again to complete your profile");
+  }
+
+  try {
+    const response = (await putData(API_ENDPOINTS.PROFILE.UPDATE, {
+      firstName: payload.firstName,
+      lastName: payload.lastName,
+      displayName: payload.displayName,
+      shopName: payload.shopName,
+      gstNumber: payload.gstNumber || undefined,
+      panNumber: payload.panNumber || undefined,
+    })) as SellerProfileResponse;
+
+    if (!response?.success) {
+      return rejectWithValue(response?.message ?? "Could not save your profile");
+    }
+
+    const profile = response.data?.sellerProfile;
+    const mapped: Seller = {
+      ...current,
+      firstName: profile?.firstName?.trim() || payload.firstName,
+      lastName: profile?.lastName?.trim() || payload.lastName,
+      shopName: profile?.shopName?.trim() || payload.shopName,
+      name:
+        `${profile?.firstName || payload.firstName} ${profile?.lastName || payload.lastName}`.trim() ||
+        current.email,
+      avatar: profile?.profileImage ?? current.avatar,
+    };
+    persistSeller(mapped);
+    return mapped;
+  } catch (error) {
+    return rejectWithValue(getErrorMessage(error, "Could not save your profile"));
   }
 });
 
@@ -153,6 +246,19 @@ const sellerAuthSlice = createSlice({
         state.seller = null;
         state.accessToken = null;
         state.error = action.payload ?? "Login failed";
+      })
+      .addCase(completeSellerProfile.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(completeSellerProfile.fulfilled, (state, action) => {
+        state.seller = action.payload;
+        state.isLoading = false;
+        state.error = null;
+      })
+      .addCase(completeSellerProfile.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload ?? "Could not save your profile";
       })
       .addCase(logoutSeller.fulfilled, (state) => {
         state.seller = null;

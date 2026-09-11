@@ -16,6 +16,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Seller | Vrindavan Rasa",
   description: "Seller panel for Vrindavan Rasa",
+  icons: {
+    icon: [{ url: "/short_logo.png?v=2", type: "image/png" }],
+    shortcut: "/short_logo.png?v=2",
+    apple: "/short_logo.png?v=2",
+  },
 };
 
 export default function RootLayout({

@@ -5,7 +5,7 @@ import { SellerHomeFooter } from "@/components/seller/home/SellerHomeFooter";
 import { NAV_LINKS } from "@/components/seller/home/sellerHome.data";
 
 type SellerAuthChromeProps = {
-  variant: "login" | "register";
+  variant: "login" | "register" | "onboarding";
   children: ReactNode;
 };
 
@@ -13,8 +13,10 @@ export function SellerAuthChrome({ variant, children }: SellerAuthChromeProps) {
   return (
     <div className="flex min-h-screen flex-col bg-[#f4f7fb]">
       <header className="border-b border-slate-100 bg-white">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 lg:px-6">
-          <SellerBrandLogo />
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-2.5 sm:gap-4 sm:py-3 lg:px-6">
+          <div className="min-w-0">
+            <SellerBrandLogo />
+          </div>
           {variant === "login" ? (
             <>
               <nav className="hidden items-center gap-5 text-[13px] font-medium text-slate-600 lg:flex">
@@ -24,26 +26,28 @@ export function SellerAuthChrome({ variant, children }: SellerAuthChromeProps) {
                   </Link>
                 ))}
               </nav>
-              <p className="flex items-center gap-2 text-sm text-slate-600">
+              <p className="flex shrink-0 items-center gap-2 text-sm text-slate-600">
                 <span className="hidden sm:inline">New to Vrindavan Rasa?</span>
                 <Link
                   href="/register"
-                  className="rounded-lg border border-[#2563eb] px-4 py-2 text-sm font-semibold text-[#2563eb] hover:bg-blue-50"
+                  className="whitespace-nowrap rounded-lg border border-[#2563eb] px-3 py-1.5 text-xs font-semibold text-[#2563eb] hover:bg-blue-50 sm:px-4 sm:py-2 sm:text-sm"
                 >
                   Create Seller Account
                 </Link>
               </p>
             </>
-          ) : (
-            <p className="flex items-center gap-2 text-sm text-slate-600">
-              Already a seller?
+          ) : variant === "register" ? (
+            <p className="flex shrink-0 items-center gap-2 text-sm text-slate-600">
+              <span className="hidden sm:inline">Already a seller?</span>
               <Link
                 href="/login"
-                className="rounded-lg border border-[#2563eb] px-4 py-2 text-sm font-semibold text-[#2563eb] hover:bg-blue-50"
+                className="whitespace-nowrap rounded-lg border border-[#2563eb] px-3 py-1.5 text-xs font-semibold text-[#2563eb] hover:bg-blue-50 sm:px-4 sm:py-2 sm:text-sm"
               >
                 Login
               </Link>
             </p>
+          ) : (
+            <p className="text-sm font-medium text-slate-600">Finish your shop profile</p>
           )}
         </div>
       </header>

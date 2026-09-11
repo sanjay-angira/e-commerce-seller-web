@@ -8,7 +8,7 @@ import {
   logoutSeller,
   setSellerCredentials,
 } from "@/services/redux/slices/sellerSlices/sellerAuthSlice";
-import type { Seller } from "@/types/user";
+import { isSellerProfileComplete, type Seller } from "@/types/user";
 
 export function useSellerAuth() {
   const dispatch = useAppDispatch();
@@ -25,6 +25,7 @@ export function useSellerAuth() {
     const storedSeller = getJson<Seller>(STORAGE_KEYS.sellerUser);
 
     if (accessToken && storedSeller) {
+      tokenStorage.setSellerProfileComplete(isSellerProfileComplete(storedSeller));
       dispatch(
         setSellerCredentials({
           seller: storedSeller,

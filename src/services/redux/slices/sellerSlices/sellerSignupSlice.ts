@@ -10,6 +10,9 @@ export type SellerSignupState = {
   phone: string;
   otp: string;
   email: string;
+  emailOtpSent: boolean;
+  emailOtp: string;
+  emailVerified: boolean;
   password: string;
   confirmPassword: string;
   firstName: string;
@@ -26,6 +29,9 @@ const initialState: SellerSignupState = {
   phone: "",
   otp: "",
   email: "",
+  emailOtpSent: false,
+  emailOtp: "",
+  emailVerified: false,
   password: "",
   confirmPassword: "",
   firstName: "",
@@ -45,6 +51,62 @@ function getErrorMessage(error: unknown, fallback: string) {
   return fallback;
 }
 
+export const checkSellerPhone = createAsyncThunk<
+  void,
+  void,
+  { state: { sellerSignup: SellerSignupState }; rejectValue: string }
+>("sellerSignup/checkPhone", async (_void, { getState, rejectWithValue }) => {
+  const phone = getState().sellerSignup.phone.replace(/\s/g, "");
+  try {
+    const response = await postData(
+      API_ENDPOINTS.AUTH.CHECK_PHONE,
+      { phone },
+      { auth: false }
+    );
+    if (!response?.success) {
+      return rejectWithValue(
+        response?.message ??
+          "This phone number is already registered as a seller. Please login."
+      );
+    }
+  } catch (error) {
+    return rejectWithValue(
+      getErrorMessage(
+        error,
+        "This phone number is already registered as a seller. Please login."
+      )
+    );
+  }
+});
+
+export const checkSellerEmail = createAsyncThunk<
+  void,
+  void,
+  { state: { sellerSignup: SellerSignupState }; rejectValue: string }
+>("sellerSignup/checkEmail", async (_void, { getState, rejectWithValue }) => {
+  const email = getState().sellerSignup.email.trim();
+  try {
+    const response = await postData(
+      API_ENDPOINTS.AUTH.CHECK_EMAIL,
+      { email },
+      { auth: false }
+    );
+    if (!response?.success) {
+      return rejectWithValue(
+        response?.message ??
+          "This email is already registered as a seller. Please login."
+      );
+    }
+  } catch (error) {
+    return rejectWithValue(
+      getErrorMessage(
+        error,
+        "This email is already registered as a seller. Please login."
+      )
+    );
+  }
+});
+
 export const registerSeller = createAsyncThunk<
   string,
   void,
@@ -55,11 +117,8 @@ export const registerSeller = createAsyncThunk<
     const response = await postData(
       API_ENDPOINTS.AUTH.REGISTER,
       {
-        firstName: form.firstName.trim(),
-        lastName: form.lastName.trim(),
         email: form.email.trim(),
         password: form.password,
-        shopName: form.shopName.trim(),
         phone: form.phone.replace(/\s/g, ""),
       },
       { auth: false }
@@ -82,11 +141,32 @@ const sellerSignupSlice = createSlice({
       action: PayloadAction<{
         field: keyof Omit<
           SellerSignupState,
-          "step" | "otpSent" | "isLoading" | "error" | "successMessage"
+          | "step"
+          | "otpSent"
+          | "emailOtpSent"
+          | "emailVerified"
+          | "isLoading"
+          | "error"
+          | "successMessage"
         >;
         value: string;
       }>
     ) {
+      if (
+        action.payload.field === "phone" &&
+        state.phone !== action.payload.value
+      ) {
+        state.otpSent = false;
+        state.otp = "";
+      }
+      if (
+        action.payload.field === "email" &&
+        state.email !== action.payload.value
+      ) {
+        state.emailOtpSent = false;
+        state.emailVerified = false;
+        state.emailOtp = "";
+      }
       state[action.payload.field] = action.payload.value;
       state.error = null;
     },
@@ -95,6 +175,16 @@ const sellerSignupSlice = createSlice({
     },
     markOtpSent(state) {
       state.otpSent = true;
+      state.error = null;
+    },
+    markEmailOtpSent(state) {
+      state.emailOtpSent = true;
+      state.emailVerified = false;
+      state.emailOtp = "";
+      state.error = null;
+    },
+    markEmailVerified(state) {
+      state.emailVerified = true;
       state.error = null;
     },
     goToSignupStep(state, action: PayloadAction<SignupStep>) {
@@ -107,13 +197,42 @@ const sellerSignupSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(checkSellerPhone.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(checkSellerPhone.fulfilled, (state) => {
+        state.isLoading = false;
+        state.otpSent = true;
+        state.error = null;
+      })
+      .addCase(checkSellerPhone.rejected, (state, action) => {
+        state.isLoading = false;
+        state.otpSent = false;
+        state.error = action.payload ?? "This phone number is already registered as a seller. Please login.";
+      })
+      .addCase(checkSellerEmail.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(checkSellerEmail.fulfilled, (state) => {
+        state.isLoading = false;
+        state.emailOtpSent = true;
+        state.error = null;
+      })
+      .addCase(checkSellerEmail.rejected, (state, action) => {
+        state.isLoading = false;
+        state.emailOtpSent = false;
+        state.error =
+          action.payload ??
+          "This email is already registered as a seller. Please login.";
+      })
       .addCase(registerSeller.pending, (state) => {
         state.isLoading = true;
         state.error = null;
       })
       .addCase(registerSeller.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.step = 4;
         state.successMessage = action.payload;
       })
       .addCase(registerSeller.rejected, (state, action) => {
@@ -127,6 +246,8 @@ export const {
   updateSignupField,
   setSignupError,
   markOtpSent,
+  markEmailOtpSent,
+  markEmailVerified,
   goToSignupStep,
   resetSignup,
 } = sellerSignupSlice.actions;

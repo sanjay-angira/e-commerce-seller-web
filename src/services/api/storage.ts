@@ -7,6 +7,7 @@ export const STORAGE_KEYS = {
   sellerRefreshToken: "seller_refresh_token",
   sellerUser: "seller_user",
   sellerSession: "seller_session",
+  sellerProfileComplete: "seller_profile_complete",
 } as const;
 
 function isBrowser() {
@@ -58,6 +59,9 @@ export const tokenStorage = {
     setCookie(STORAGE_KEYS.sellerAccessToken, token);
     setCookie(STORAGE_KEYS.sellerSession, "1");
   },
+  setSellerProfileComplete: (complete: boolean) => {
+    setCookie(STORAGE_KEYS.sellerProfileComplete, complete ? "1" : "0");
+  },
   getSellerRefreshToken: () =>
     Cookies.get(STORAGE_KEYS.sellerRefreshToken) ?? null,
   setSellerRefreshToken: (token: string) => {
@@ -68,6 +72,7 @@ export const tokenStorage = {
     removeCookie(STORAGE_KEYS.sellerAccessToken);
     removeCookie(STORAGE_KEYS.sellerRefreshToken);
     removeCookie(STORAGE_KEYS.sellerSession);
+    removeCookie(STORAGE_KEYS.sellerProfileComplete);
   },
   hasSellerSession: () => tokenStorage.getSellerAccessToken() !== null,
 };

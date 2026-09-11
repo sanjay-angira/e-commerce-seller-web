@@ -8,35 +8,30 @@ import { Input } from "@/components/common/Input";
 import { useAppDispatch, useAppSelector } from "@/services/redux/hooks";
 import { selectSellerSignup } from "@/services/redux/selectors";
 import {
+  checkSellerEmail,
+  checkSellerPhone,
   goToSignupStep,
-  markOtpSent,
+  markEmailVerified,
   registerSeller,
+  resetSignup,
   setSignupError,
   updateSignupField,
 } from "@/services/redux/slices/sellerSlices/sellerSignupSlice";
 
-const STEPS = ["Verify Phone", "Verify Email", "Set Password", "Complete"] as const;
+const STEPS = ["Verify Phone", "Verify Email", "Shop Profile", "Complete"] as const;
 
 export function SellerRegisterForm() {
   const dispatch = useAppDispatch();
   const form = useAppSelector(selectSellerSignup);
 
   function setField(
-    field:
-      | "phone"
-      | "otp"
-      | "email"
-      | "password"
-      | "confirmPassword"
-      | "firstName"
-      | "lastName"
-      | "shopName",
+    field: "phone" | "otp" | "email" | "emailOtp" | "password" | "confirmPassword",
     value: string
   ) {
     dispatch(updateSignupField({ field, value }));
   }
 
-  function handlePhone(event: FormEvent) {
+  async function handlePhone(event: FormEvent) {
     event.preventDefault();
     const phone = form.phone.replace(/\s/g, "");
     if (!/^[0-9]{10}$/.test(phone)) {
@@ -44,7 +39,7 @@ export function SellerRegisterForm() {
       return;
     }
     if (!form.otpSent) {
-      dispatch(markOtpSent());
+      await dispatch(checkSellerPhone());
       return;
     }
     if (!/^[0-9]{6}$/.test(form.otp)) {
@@ -54,25 +49,25 @@ export function SellerRegisterForm() {
     dispatch(goToSignupStep(2));
   }
 
-  function handleEmail(event: FormEvent) {
+  async function handleEmail(event: FormEvent) {
     event.preventDefault();
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
-      dispatch(setSignupError("Enter a valid email address"));
+    if (!form.emailVerified) {
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
+        dispatch(setSignupError("Enter a valid email address"));
+        return;
+      }
+      if (!form.emailOtpSent) {
+        await dispatch(checkSellerEmail());
+        return;
+      }
+      if (!/^[0-9]{6}$/.test(form.emailOtp)) {
+        dispatch(setSignupError("Enter the 6-digit email OTP"));
+        return;
+      }
+      dispatch(markEmailVerified());
       return;
     }
-    dispatch(goToSignupStep(3));
-  }
 
-  async function handlePassword(event: FormEvent) {
-    event.preventDefault();
-    if (form.firstName.trim().length < 2 || form.lastName.trim().length < 1) {
-      dispatch(setSignupError("Enter your first and last name"));
-      return;
-    }
-    if (form.shopName.trim().length < 2) {
-      dispatch(setSignupError("Enter your shop name"));
-      return;
-    }
     if (form.password.length < 6) {
       dispatch(setSignupError("Password must be at least 6 characters"));
       return;
@@ -81,7 +76,21 @@ export function SellerRegisterForm() {
       dispatch(setSignupError("Passwords do not match"));
       return;
     }
-    await dispatch(registerSeller());
+
+    const email = form.email.trim();
+    const result = await dispatch(registerSeller());
+    if (registerSeller.fulfilled.match(result)) {
+      dispatch(resetSignup());
+      window.location.href = `/login?registered=1&email=${encodeURIComponent(email)}`;
+      return;
+    }
+    const message = registerSeller.rejected.match(result)
+      ? String(result.payload ?? "")
+      : "";
+    if (/already registered as a seller|already has a seller profile/i.test(message)) {
+      dispatch(resetSignup());
+      window.location.href = `/login?exists=1&email=${encodeURIComponent(email)}`;
+    }
   }
 
   return (
@@ -124,13 +133,25 @@ export function SellerRegisterForm() {
               Enter your mobile number. We&apos;ll send you a 6-digit OTP to verify.
             </p>
             <ErrorMessage message={form.error ?? ""} />
+            {form.error?.toLowerCase().includes("already registered as a seller") && (
+              <p className="text-sm text-slate-600">
+                <Link href="/login" className="font-semibold text-[#2563eb]">
+                  Login
+                </Link>{" "}
+                with this number instead.
+              </p>
+            )}
             <div>
               <label className="mb-1.5 block text-sm font-medium text-zinc-700">
                 Phone Number
               </label>
               <div className="flex overflow-hidden rounded-lg border border-zinc-300 focus-within:border-[#2563eb] focus-within:ring-2 focus-within:ring-[#2563eb]/15">
-                <span className="flex items-center gap-1 border-r border-zinc-200 bg-slate-50 px-3 text-sm text-slate-600">
-                  🇮🇳 +91
+                <span
+                  className="flex items-center gap-2 border-r border-zinc-200 bg-slate-50 px-3"
+                  aria-label="India country code +91"
+                >
+                  <IndiaFlag />
+                  <span className="text-sm font-semibold text-slate-800">+91</span>
                 </span>
                 <input
                   value={form.phone}
@@ -154,9 +175,14 @@ export function SellerRegisterForm() {
             )}
             <button
               type="submit"
-              className="w-full rounded-lg bg-[#2563eb] py-2.5 text-sm font-semibold text-white hover:bg-[#1d4ed8]"
+              disabled={form.isLoading}
+              className="w-full rounded-lg bg-[#2563eb] py-2.5 text-sm font-semibold text-white hover:bg-[#1d4ed8] disabled:opacity-60"
             >
-              {form.otpSent ? "Verify OTP" : "Send OTP"}
+              {form.isLoading
+                ? "Checking..."
+                : form.otpSent
+                  ? "Verify OTP"
+                  : "Send OTP"}
             </button>
           </form>
         )}
@@ -164,99 +190,85 @@ export function SellerRegisterForm() {
         {form.step === 2 && (
           <form onSubmit={handleEmail} className="space-y-4">
             <p className="text-xs font-semibold text-[#2563eb]">Step 2 of 4</p>
-            <h3 className="text-base font-bold text-[#12325c]">Verify Your Email</h3>
+            <h3 className="text-base font-bold text-[#12325c]">
+              {form.emailVerified ? "Set Password" : "Verify Your Email"}
+            </h3>
             <p className="text-sm text-slate-500">
-              Enter the email you will use to manage your seller account.
+              {form.emailVerified
+                ? "Create a password for your seller account, then login to continue."
+                : form.emailOtpSent
+                  ? "Enter the 6-digit OTP sent to your email."
+                  : "Enter your email. We'll send a 6-digit OTP to verify it."}
             </p>
             <ErrorMessage message={form.error ?? ""} />
-            <Input
-              label="Email"
-              type="email"
-              value={form.email}
-              onChange={(event) => setField("email", event.target.value)}
-              placeholder="seller@example.com"
-              required
-            />
-            <button
-              type="submit"
-              className="w-full rounded-lg bg-[#2563eb] py-2.5 text-sm font-semibold text-white hover:bg-[#1d4ed8]"
-            >
-              Continue
-            </button>
-          </form>
-        )}
-
-        {form.step === 3 && (
-          <form onSubmit={handlePassword} className="space-y-4">
-            <p className="text-xs font-semibold text-[#2563eb]">Step 3 of 4</p>
-            <h3 className="text-base font-bold text-[#12325c]">Set Password</h3>
-            <p className="text-sm text-slate-500">
-              Create your shop profile and a password for your seller account.
-            </p>
-            <ErrorMessage message={form.error ?? ""} />
-            <div className="grid grid-cols-2 gap-3">
+            {form.error?.toLowerCase().includes("already registered as a seller") && (
+              <p className="text-sm text-slate-600">
+                <Link href={`/login?email=${encodeURIComponent(form.email.trim())}&exists=1`} className="font-semibold text-[#2563eb]">
+                  Login
+                </Link>{" "}
+                with this email instead.
+              </p>
+            )}
+            {!form.emailVerified && (
               <Input
-                label="First name"
-                value={form.firstName}
-                onChange={(event) => setField("firstName", event.target.value)}
+                label="Email"
+                type="email"
+                value={form.email}
+                onChange={(event) => setField("email", event.target.value)}
+                placeholder="seller@example.com"
                 required
               />
+            )}
+            {form.emailOtpSent && !form.emailVerified && (
               <Input
-                label="Last name"
-                value={form.lastName}
-                onChange={(event) => setField("lastName", event.target.value)}
+                label="Email OTP"
+                value={form.emailOtp}
+                onChange={(event) => setField("emailOtp", event.target.value)}
+                placeholder="Enter 6-digit OTP"
+                inputMode="numeric"
                 required
               />
-            </div>
-            <Input
-              label="Shop name"
-              value={form.shopName}
-              onChange={(event) => setField("shopName", event.target.value)}
-              required
-            />
-            <Input
-              label="Password"
-              type="password"
-              value={form.password}
-              onChange={(event) => setField("password", event.target.value)}
-              leftIcon={<Lock className="h-4 w-4" />}
-              showPasswordToggle
-              required
-            />
-            <Input
-              label="Confirm password"
-              type="password"
-              value={form.confirmPassword}
-              onChange={(event) => setField("confirmPassword", event.target.value)}
-              leftIcon={<Lock className="h-4 w-4" />}
-              showPasswordToggle
-              required
-            />
+            )}
+            {form.emailVerified && (
+              <>
+                <Input
+                  label="Password"
+                  type="password"
+                  value={form.password}
+                  onChange={(event) => setField("password", event.target.value)}
+                  leftIcon={<Lock className="h-4 w-4" />}
+                  showPasswordToggle
+                  required
+                />
+                <Input
+                  label="Confirm password"
+                  type="password"
+                  value={form.confirmPassword}
+                  onChange={(event) =>
+                    setField("confirmPassword", event.target.value)
+                  }
+                  leftIcon={<Lock className="h-4 w-4" />}
+                  showPasswordToggle
+                  required
+                />
+              </>
+            )}
             <button
               type="submit"
               disabled={form.isLoading}
               className="w-full rounded-lg bg-[#2563eb] py-2.5 text-sm font-semibold text-white hover:bg-[#1d4ed8] disabled:opacity-60"
             >
-              {form.isLoading ? "Creating account..." : "Create Account"}
+              {!form.emailOtpSent
+                ? form.isLoading
+                  ? "Checking..."
+                  : "Verify Email"
+                : !form.emailVerified
+                  ? "Verify OTP"
+                  : form.isLoading
+                    ? "Creating account..."
+                    : "Set Password"}
             </button>
           </form>
-        )}
-
-        {form.step === 4 && (
-          <div className="space-y-4 text-center">
-            <p className="text-xs font-semibold text-[#2563eb]">Step 4 of 4</p>
-            <h3 className="text-base font-bold text-[#12325c]">Account created</h3>
-            <p className="text-sm text-slate-500">
-              {form.successMessage ||
-                "Seller registered. Waiting for admin approval."}
-            </p>
-            <Link
-              href="/login"
-              className="inline-flex w-full items-center justify-center rounded-lg bg-[#2563eb] py-2.5 text-sm font-semibold text-white hover:bg-[#1d4ed8]"
-            >
-              Go to Login
-            </Link>
-          </div>
         )}
       </div>
 
@@ -273,5 +285,35 @@ export function SellerRegisterForm() {
         </Link>
       </p>
     </div>
+  );
+}
+
+function IndiaFlag() {
+  return (
+    <svg
+      viewBox="0 0 30 20"
+      className="h-4 w-6 shrink-0 overflow-hidden rounded-[2px] ring-1 ring-black/10"
+      aria-hidden="true"
+    >
+      <rect width="30" height="20" fill="#fff" />
+      <rect width="30" height="6.67" fill="#FF9933" />
+      <rect y="13.33" width="30" height="6.67" fill="#138808" />
+      <circle cx="15" cy="10" r="2.4" fill="none" stroke="#000080" strokeWidth="0.7" />
+      <circle cx="15" cy="10" r="0.45" fill="#000080" />
+      {Array.from({ length: 12 }, (_, index) => {
+        const angle = (index * Math.PI) / 6;
+        return (
+          <line
+            key={index}
+            x1="15"
+            y1="10"
+            x2={15 + Math.cos(angle) * 2.2}
+            y2={10 + Math.sin(angle) * 2.2}
+            stroke="#000080"
+            strokeWidth="0.35"
+          />
+        );
+      })}
+    </svg>
   );
 }

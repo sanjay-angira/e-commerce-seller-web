@@ -1,18 +1,23 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useState } from "react";
+import { FormEvent, Suspense, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Lock, Mail } from "lucide-react";
 import { ErrorMessage } from "@/components/common/ErrorMessage";
 import { Input } from "@/components/common/Input";
 import { useAppDispatch, useAppSelector } from "@/services/redux/hooks";
 import { selectSellerAuth } from "@/services/redux/selectors";
 import { loginSeller } from "@/services/redux/slices/sellerSlices/sellerAuthSlice";
+import { sellerHomePath } from "@/types/user";
 
-export function SellerLoginForm() {
+function SellerLoginFormFields() {
   const dispatch = useAppDispatch();
+  const searchParams = useSearchParams();
   const { isLoading, error } = useAppSelector(selectSellerAuth);
-  const [email, setEmail] = useState("");
+  const registered = searchParams.get("registered") === "1";
+  const alreadyExists = searchParams.get("exists") === "1";
+  const [email, setEmail] = useState(searchParams.get("email") ?? "");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(true);
   const [googleHint, setGoogleHint] = useState("");
@@ -22,7 +27,7 @@ export function SellerLoginForm() {
     setGoogleHint("");
     const result = await dispatch(loginSeller({ email: email.trim(), password }));
     if (loginSeller.fulfilled.match(result)) {
-      window.location.href = "/dashboard";
+      window.location.href = sellerHomePath(result.payload.seller);
     }
   }
 
@@ -32,6 +37,18 @@ export function SellerLoginForm() {
       <p className="mt-1 text-sm text-slate-500">
         Welcome back! Please login to continue.
       </p>
+
+      {registered && (
+        <p className="mt-4 rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
+          Account created. Login to fill your shop profile.
+        </p>
+      )}
+      {alreadyExists && (
+        <p className="mt-4 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-800">
+          This phone number is already a seller. Login with the email and
+          password from that account.
+        </p>
+      )}
 
       <form onSubmit={handleSubmit} className="mt-6 space-y-4">
         <ErrorMessage message={error || googleHint} />
@@ -104,6 +121,14 @@ export function SellerLoginForm() {
         </Link>
       </p>
     </div>
+  );
+}
+
+export function SellerLoginForm() {
+  return (
+    <Suspense fallback={<div className="w-full max-w-md rounded-2xl bg-white p-8" />}>
+      <SellerLoginFormFields />
+    </Suspense>
   );
 }
 
