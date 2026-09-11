@@ -21,10 +21,10 @@ export default function SellerDashboardPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-seller-muted px-4">
       <div className="w-full max-w-md rounded-2xl border border-seller-border bg-white p-8">
-        <p className="text-xs font-semibold uppercase tracking-widest text-seller-primary">
+        <p className="text-xs font-semibold uppercase tracking-widest text-seller-accent">
           Seller Panel
         </p>
-        <h1 className="mt-2 text-2xl font-semibold text-slate-900">
+        <h1 className="mt-2 text-2xl font-semibold text-seller-navy">
           You are signed in
         </h1>
         <p className="mt-2 text-sm text-slate-600">{seller.email}</p>
@@ -32,7 +32,7 @@ export default function SellerDashboardPage() {
           <p className="mt-1 text-sm text-slate-500">{seller.shopName}</p>
         )}
         <div className="mt-6">
-          <Button type="button" onClick={() => void logout()}>
+          <Button type="button" variant="secondary" onClick={() => void logout()}>
             Sign out
           </Button>
         </div>

@@ -11,7 +11,7 @@ type SellerAuthChromeProps = {
 
 export function SellerAuthChrome({ variant, children }: SellerAuthChromeProps) {
   return (
-    <div className="flex min-h-screen flex-col bg-[#f4f7fb]">
+    <div className="flex min-h-screen flex-col bg-seller-tint">
       <header className="border-b border-slate-100 bg-white">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-2.5 sm:gap-4 sm:py-3 lg:px-6">
           <div className="min-w-0">
@@ -21,7 +21,7 @@ export function SellerAuthChrome({ variant, children }: SellerAuthChromeProps) {
             <>
               <nav className="hidden items-center gap-5 text-[13px] font-medium text-slate-600 lg:flex">
                 {NAV_LINKS.map((link) => (
-                  <Link key={link.href} href={`/${link.href}`} className="hover:text-[#2563eb]">
+                  <Link key={link.href} href={`/${link.href}`} className="hover:text-seller-primary">
                     {link.label}
                   </Link>
                 ))}
@@ -30,7 +30,7 @@ export function SellerAuthChrome({ variant, children }: SellerAuthChromeProps) {
                 <span className="hidden sm:inline">New to Vrindavan Rasa?</span>
                 <Link
                   href="/register"
-                  className="whitespace-nowrap rounded-lg border border-[#2563eb] px-3 py-1.5 text-xs font-semibold text-[#2563eb] hover:bg-blue-50 sm:px-4 sm:py-2 sm:text-sm"
+                  className="whitespace-nowrap rounded-lg border border-seller-accent px-3 py-1.5 text-xs font-semibold text-seller-accent hover:bg-seller-muted sm:px-4 sm:py-2 sm:text-sm"
                 >
                   Create Seller Account
                 </Link>
@@ -41,7 +41,7 @@ export function SellerAuthChrome({ variant, children }: SellerAuthChromeProps) {
               <span className="hidden sm:inline">Already a seller?</span>
               <Link
                 href="/login"
-                className="whitespace-nowrap rounded-lg border border-[#2563eb] px-3 py-1.5 text-xs font-semibold text-[#2563eb] hover:bg-blue-50 sm:px-4 sm:py-2 sm:text-sm"
+                className="whitespace-nowrap rounded-lg border border-seller-primary px-3 py-1.5 text-xs font-semibold text-seller-primary hover:bg-seller-tint sm:px-4 sm:py-2 sm:text-sm"
               >
                 Login
               </Link>

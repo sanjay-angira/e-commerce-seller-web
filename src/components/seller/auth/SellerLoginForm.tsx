@@ -33,7 +33,7 @@ function SellerLoginFormFields() {
 
   return (
     <div className="w-full max-w-md rounded-2xl bg-white p-8 ring-1 ring-slate-100">
-      <h2 className="text-2xl font-bold text-[#12325c]">Seller Login</h2>
+      <h2 className="text-2xl font-bold text-seller-navy">Seller Login</h2>
       <p className="mt-1 text-sm text-slate-500">
         Welcome back! Please login to continue.
       </p>
@@ -83,17 +83,17 @@ function SellerLoginFormFields() {
               type="checkbox"
               checked={remember}
               onChange={(event) => setRemember(event.target.checked)}
-              className="h-4 w-4 rounded border-slate-300 text-[#2563eb]"
+              className="h-4 w-4 rounded border-slate-300 text-seller-primary"
             />
             Remember me
           </label>
-          <span className="font-medium text-[#2563eb]">Forgot Password?</span>
+          <span className="font-medium text-seller-primary">Forgot Password?</span>
         </div>
 
         <button
           type="submit"
           disabled={isLoading}
-          className="flex w-full items-center justify-center rounded-lg bg-[#2563eb] py-2.5 text-sm font-semibold text-white hover:bg-[#1d4ed8] disabled:opacity-60"
+          className="flex w-full items-center justify-center rounded-lg bg-seller-primary py-2.5 text-sm font-semibold text-white hover:bg-seller-primary-hover disabled:opacity-60"
         >
           {isLoading ? "Logging in..." : "Login to Seller Account"}
         </button>
@@ -116,7 +116,7 @@ function SellerLoginFormFields() {
 
       <p className="mt-5 text-center text-sm text-slate-600">
         New to Vrindavan Rasa?{" "}
-        <Link href="/register" className="font-semibold text-[#2563eb]">
+        <Link href="/register" className="font-semibold text-seller-accent">
           Create a Seller Account
         </Link>
       </p>

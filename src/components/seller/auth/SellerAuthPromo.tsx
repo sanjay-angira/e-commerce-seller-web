@@ -16,13 +16,13 @@ export type PromoFeature = {
 };
 
 const ICON_WRAP: Record<PromoFeature["icon"], string> = {
-  sales: "bg-blue-50 text-[#2563eb]",
-  reach: "bg-blue-50 text-[#2563eb]",
-  products: "bg-emerald-50 text-emerald-600",
-  grow: "bg-emerald-50 text-emerald-600",
-  orders: "bg-orange-50 text-orange-500",
-  pay: "bg-orange-50 text-orange-500",
-  support: "bg-rose-50 text-rose-500",
+  sales: "bg-seller-tint text-seller-primary",
+  reach: "bg-seller-tint text-seller-primary",
+  products: "bg-seller-muted text-seller-accent",
+  grow: "bg-seller-muted text-seller-accent",
+  orders: "bg-seller-muted text-seller-accent",
+  pay: "bg-seller-muted text-seller-accent",
+  support: "bg-seller-tint text-seller-primary",
 };
 
 function FeatureIcon({ icon }: { icon: PromoFeature["icon"] }) {
@@ -44,7 +44,7 @@ type SellerAuthPromoProps = {
 export function SellerAuthPromo({ title, subtitle, features }: SellerAuthPromoProps) {
   return (
     <div className="max-w-lg">
-      <h1 className="text-4xl font-extrabold leading-tight text-[#12325c] md:text-[42px]">
+      <h1 className="text-4xl font-extrabold leading-tight text-seller-navy md:text-[42px]">
         {title}
       </h1>
       <p className="mt-3 text-[15px] leading-relaxed text-slate-600">{subtitle}</p>
@@ -57,7 +57,7 @@ export function SellerAuthPromo({ title, subtitle, features }: SellerAuthPromoPr
               <FeatureIcon icon={item.icon} />
             </span>
             <span>
-              <span className="block text-sm font-bold text-[#12325c]">
+              <span className="block text-sm font-bold text-seller-navy">
                 {item.title}
               </span>
               <span className="block text-sm text-slate-500">{item.text}</span>
@@ -78,15 +78,15 @@ export function SellerAuthPromo({ title, subtitle, features }: SellerAuthPromoPr
         </div>
         <div className="absolute -left-2 top-6 rounded-xl bg-white px-3 py-2 text-xs font-semibold text-slate-700 ring-1 ring-slate-100">
           <div className="mb-1 flex items-end gap-0.5">
-            <span className="h-2 w-1.5 rounded-sm bg-emerald-200" />
-            <span className="h-3 w-1.5 rounded-sm bg-emerald-300" />
-            <span className="h-4 w-1.5 rounded-sm bg-emerald-400" />
-            <span className="h-5 w-1.5 rounded-sm bg-emerald-500" />
+            <span className="h-2 w-1.5 rounded-sm bg-seller-accent/30" />
+            <span className="h-3 w-1.5 rounded-sm bg-seller-accent/50" />
+            <span className="h-4 w-1.5 rounded-sm bg-seller-accent/75" />
+            <span className="h-5 w-1.5 rounded-sm bg-seller-accent" />
           </div>
           Grow Your Business
         </div>
         <div className="absolute bottom-4 left-8 flex items-center gap-2 rounded-xl bg-white px-3 py-2 text-xs font-semibold text-slate-700 ring-1 ring-slate-100">
-          <ShieldCheck className="h-4 w-4 text-emerald-500" />
+          <ShieldCheck className="h-4 w-4 text-seller-accent" />
           Trusted by 1,00,000+ Sellers
         </div>
       </div>

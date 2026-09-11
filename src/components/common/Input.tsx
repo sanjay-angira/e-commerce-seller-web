@@ -46,7 +46,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       : "border-zinc-300";
 
     const inputClassName = [
-      "w-full rounded-lg border bg-white py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 transition-colors focus:border-[#2563eb] focus:outline-none focus:ring-2 focus:ring-[#2563eb]/15",
+      "w-full rounded-lg border bg-white py-2.5 text-sm text-seller-navy placeholder:text-zinc-400 transition-colors focus:border-seller-primary focus:outline-none focus:ring-2 focus:ring-seller-primary/15",
       leftIcon ? "pl-10" : "px-3.5",
       canTogglePassword ? "pr-11" : leftIcon ? "pr-3.5" : "",
       borderClass,

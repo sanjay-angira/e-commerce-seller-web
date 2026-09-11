@@ -24,10 +24,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
     const variants = {
       primary:
-        "bg-seller-primary text-white hover:bg-seller-primary-hover focus-visible:outline-seller-primary",
+        "bg-seller-accent text-white hover:bg-seller-accent-hover focus-visible:outline-seller-accent",
       secondary:
-        "border border-seller-border bg-white text-slate-900 hover:bg-seller-muted focus-visible:outline-seller-primary",
-      ghost: "text-slate-600 hover:bg-seller-muted hover:text-seller-primary",
+        "border border-seller-primary bg-white text-seller-primary hover:bg-seller-tint focus-visible:outline-seller-primary",
+      ghost: "text-seller-navy hover:bg-seller-tint hover:text-seller-accent",
     };
 
     return (

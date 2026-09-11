@@ -85,7 +85,7 @@ export function SellerOnboardingForm() {
 
   return (
     <div className="w-full max-w-md rounded-2xl bg-white p-8 ring-1 ring-slate-100">
-      <h2 className="text-2xl font-bold text-[#12325c]">Complete Your Shop Profile</h2>
+      <h2 className="text-2xl font-bold text-seller-navy">Complete Your Shop Profile</h2>
       <p className="mt-1 text-sm text-slate-500">
         Add your name and business details to start selling.
       </p>
@@ -100,21 +100,21 @@ export function SellerOnboardingForm() {
               <span
                 className={`flex h-7 w-7 items-center justify-center rounded-full text-xs ${
                   active || done
-                    ? "bg-[#2563eb] text-white"
+                    ? "bg-seller-accent text-white"
                     : "bg-slate-100 text-slate-500"
                 }`}
               >
                 {done ? <Check className="h-3.5 w-3.5" /> : step}
               </span>
-              <span className={active ? "text-[#2563eb]" : ""}>{label}</span>
+              <span className={active ? "text-seller-accent" : ""}>{label}</span>
             </li>
           );
         })}
       </ol>
 
       <form onSubmit={handleSubmit} className="mt-5 space-y-4 rounded-xl border border-slate-100 p-4">
-        <p className="text-xs font-semibold text-[#2563eb]">Step 3 of 4</p>
-        <h3 className="text-base font-bold text-[#12325c]">Shop Profile</h3>
+        <p className="text-xs font-semibold text-seller-accent">Step 3 of 4</p>
+        <h3 className="text-base font-bold text-seller-navy">Shop Profile</h3>
         <p className="text-sm text-slate-500">
           These details are shown on your seller account and shop.
         </p>
@@ -161,14 +161,14 @@ export function SellerOnboardingForm() {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full rounded-lg bg-[#2563eb] py-2.5 text-sm font-semibold text-white hover:bg-[#1d4ed8] disabled:opacity-60"
+          className="w-full rounded-lg bg-seller-accent py-2.5 text-sm font-semibold text-white hover:bg-seller-accent-hover disabled:opacity-60"
         >
           {isLoading ? "Saving..." : "Save and Continue"}
         </button>
       </form>
 
-      <div className="mt-4 flex items-start gap-2 rounded-lg bg-blue-50 px-3 py-3 text-xs text-slate-600">
-        <Lock className="mt-0.5 h-4 w-4 shrink-0 text-[#2563eb]" />
+      <div className="mt-4 flex items-start gap-2 rounded-lg bg-seller-tint px-3 py-3 text-xs text-slate-600">
+        <Lock className="mt-0.5 h-4 w-4 shrink-0 text-seller-primary" />
         Your information is safe with us. We use industry-standard encryption to
         protect your data.
       </div>
@@ -177,7 +177,7 @@ export function SellerOnboardingForm() {
         <button
           type="button"
           onClick={() => void logout()}
-          className="font-semibold text-[#2563eb]"
+          className="font-semibold text-seller-primary"
         >
           Sign out
         </button>

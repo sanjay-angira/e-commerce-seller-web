@@ -6,7 +6,7 @@ export function SellerHomeTestimonials() {
   return (
     <section id="success-stories" className="bg-white py-16">
       <div className="mx-auto max-w-6xl px-4 lg:px-6">
-        <h2 className="text-center text-3xl font-bold text-[#12325c]">
+        <h2 className="text-center text-3xl font-bold text-seller-navy">
           What Our Sellers Say
         </h2>
         <p className="mt-3 text-center text-sm text-slate-500">
@@ -29,9 +29,9 @@ export function SellerHomeTestimonials() {
               <p className="mt-4 text-sm italic leading-relaxed text-slate-600">
                 &ldquo;{item.quote}&rdquo;
               </p>
-              <p className="mt-4 text-sm font-bold text-[#12325c]">{item.name}</p>
+              <p className="mt-4 text-sm font-bold text-seller-navy">{item.name}</p>
               <p className="text-xs text-slate-500">{item.role}</p>
-              <div className="mt-3 flex gap-0.5 text-amber-400">
+              <div className="mt-3 flex gap-0.5 text-seller-accent-soft">
                 {Array.from({ length: 5 }).map((_, index) => (
                   <Star key={index} className="h-4 w-4 fill-current" />
                 ))}

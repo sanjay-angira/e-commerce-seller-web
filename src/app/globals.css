@@ -5,18 +5,23 @@
 
 @theme {
   --color-background: #ffffff;
-  --color-foreground: #171717;
-  --color-seller-primary: #c59d5f;
-  --color-seller-primary-hover: #a67c3d;
-  --color-seller-muted: #fcf9f2;
-  --color-seller-border: #c59d5f59;
+  --color-foreground: #082030;
+  --color-seller-navy: #082030;
+  --color-seller-primary: #003068;
+  --color-seller-primary-hover: #002050;
+  --color-seller-accent: #f84800;
+  --color-seller-accent-hover: #d63e00;
+  --color-seller-accent-soft: #f89800;
+  --color-seller-muted: #fff5f0;
+  --color-seller-tint: #e8eef5;
+  --color-seller-border: #00306833;
   --font-sans: var(--font-geist-sans), "Segoe UI", system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 }
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #082030;
 }
 
 body {
@@ -25,24 +30,51 @@ body {
   font-family: var(--font-sans);
 }
 
+.bg-seller-navy {
+  background-color: #082030;
+}
+.text-seller-navy {
+  color: #082030;
+}
 .bg-seller-primary {
-  background-color: #c59d5f;
+  background-color: #003068;
 }
 .bg-seller-primary-hover {
-  background-color: #a67c3d;
+  background-color: #002050;
 }
 .hover\:bg-seller-primary-hover:hover {
-  background-color: #a67c3d;
-}
-.bg-seller-muted {
-  background-color: #fcf9f2;
+  background-color: #002050;
 }
 .text-seller-primary {
-  color: #c59d5f;
+  color: #003068;
 }
-.border-seller-border {
-  border-color: rgba(197, 157, 95, 0.35);
+.hover\:text-seller-primary:hover {
+  color: #003068;
+}
+.border-seller-primary {
+  border-color: #003068;
 }
 .focus\:border-seller-primary:focus {
-  border-color: #c59d5f;
+  border-color: #003068;
+}
+.bg-seller-accent {
+  background-color: #f84800;
+}
+.hover\:bg-seller-accent-hover:hover {
+  background-color: #d63e00;
+}
+.text-seller-accent {
+  color: #f84800;
+}
+.hover\:text-seller-accent:hover {
+  color: #f84800;
+}
+.bg-seller-muted {
+  background-color: #fff5f0;
+}
+.bg-seller-tint {
+  background-color: #e8eef5;
+}
+.border-seller-border {
+  border-color: rgba(0, 48, 104, 0.2);
 }

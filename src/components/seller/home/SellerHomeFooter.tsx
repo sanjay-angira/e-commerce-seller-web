@@ -23,7 +23,7 @@ export function SellerHomeFooter() {
         <SellerBrandLogo compact />
         <nav className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-slate-600">
           {FOOTER_LINKS.map((link) => (
-            <a key={link.label} href={link.href} className="hover:text-[#2563eb]">
+            <a key={link.label} href={link.href} className="hover:text-seller-primary">
               {link.label}
             </a>
           ))}

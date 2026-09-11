@@ -26,8 +26,8 @@ export function SellerHomeNav() {
               href={link.href}
               className={
                 index === 0
-                  ? "text-[#2563eb]"
-                  : "hover:text-[#2563eb]"
+                  ? "text-seller-accent"
+                  : "hover:text-seller-primary"
               }
             >
               {link.label}
@@ -39,7 +39,7 @@ export function SellerHomeNav() {
           {signedIn ? (
             <Link
               href="/dashboard"
-              className="rounded-lg bg-[#2563eb] px-4 py-2 text-sm font-semibold text-white hover:bg-[#1d4ed8]"
+              className="rounded-lg bg-seller-primary px-4 py-2 text-sm font-semibold text-white hover:bg-seller-primary-hover"
             >
               Dashboard
             </Link>
@@ -47,13 +47,13 @@ export function SellerHomeNav() {
             <>
               <Link
                 href="/login"
-                className="rounded-lg border border-[#2563eb] px-4 py-2 text-sm font-semibold text-[#2563eb] hover:bg-blue-50"
+                className="rounded-lg border border-seller-primary px-4 py-2 text-sm font-semibold text-seller-primary hover:bg-seller-tint"
               >
                 Login
               </Link>
               <Link
                 href="/register"
-                className="rounded-lg bg-[#2563eb] px-4 py-2 text-sm font-semibold text-white hover:bg-[#1d4ed8]"
+                className="rounded-lg bg-seller-accent px-4 py-2 text-sm font-semibold text-white hover:bg-seller-accent-hover"
               >
                 Start Selling
               </Link>
@@ -84,7 +84,7 @@ export function SellerHomeNav() {
               </a>
             ))}
             {signedIn ? (
-              <Link href="/dashboard" className="font-semibold text-[#2563eb]">
+              <Link href="/dashboard" className="font-semibold text-seller-primary">
                 Dashboard
               </Link>
             ) : (
@@ -92,7 +92,7 @@ export function SellerHomeNav() {
                 <Link href="/login">Login</Link>
                 <Link
                   href="/register"
-                  className="rounded-lg bg-[#2563eb] px-4 py-2 text-center font-semibold text-white"
+                  className="rounded-lg bg-seller-accent px-4 py-2 text-center font-semibold text-white"
                 >
                   Start Selling
                 </Link>

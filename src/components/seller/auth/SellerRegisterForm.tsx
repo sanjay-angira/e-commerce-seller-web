@@ -95,7 +95,7 @@ export function SellerRegisterForm() {
 
   return (
     <div className="w-full max-w-md rounded-2xl bg-white p-8 ring-1 ring-slate-100">
-      <h2 className="text-2xl font-bold text-[#12325c]">Create Your Seller Account</h2>
+      <h2 className="text-2xl font-bold text-seller-navy">Create Your Seller Account</h2>
       <p className="mt-1 text-sm text-slate-500">
         It&apos;s quick and easy. Follow the steps to get started.
       </p>
@@ -110,13 +110,13 @@ export function SellerRegisterForm() {
               <span
                 className={`flex h-7 w-7 items-center justify-center rounded-full text-xs ${
                   active || done
-                    ? "bg-[#2563eb] text-white"
+                    ? "bg-seller-accent text-white"
                     : "bg-slate-100 text-slate-500"
                 }`}
               >
                 {done ? <Check className="h-3.5 w-3.5" /> : step}
               </span>
-              <span className={active ? "text-[#2563eb]" : ""}>{label}</span>
+              <span className={active ? "text-seller-accent" : ""}>{label}</span>
             </li>
           );
         })}
@@ -125,8 +125,8 @@ export function SellerRegisterForm() {
       <div className="mt-5 rounded-xl border border-slate-100 p-4">
         {form.step === 1 && (
           <form onSubmit={handlePhone} className="space-y-4">
-            <p className="text-xs font-semibold text-[#2563eb]">Step 1 of 4</p>
-            <h3 className="text-base font-bold text-[#12325c]">
+            <p className="text-xs font-semibold text-seller-accent">Step 1 of 4</p>
+            <h3 className="text-base font-bold text-seller-navy">
               Verify Your Phone Number
             </h3>
             <p className="text-sm text-slate-500">
@@ -135,7 +135,7 @@ export function SellerRegisterForm() {
             <ErrorMessage message={form.error ?? ""} />
             {form.error?.toLowerCase().includes("already registered as a seller") && (
               <p className="text-sm text-slate-600">
-                <Link href="/login" className="font-semibold text-[#2563eb]">
+                <Link href="/login" className="font-semibold text-seller-primary">
                   Login
                 </Link>{" "}
                 with this number instead.
@@ -145,7 +145,7 @@ export function SellerRegisterForm() {
               <label className="mb-1.5 block text-sm font-medium text-zinc-700">
                 Phone Number
               </label>
-              <div className="flex overflow-hidden rounded-lg border border-zinc-300 focus-within:border-[#2563eb] focus-within:ring-2 focus-within:ring-[#2563eb]/15">
+              <div className="flex overflow-hidden rounded-lg border border-zinc-300 focus-within:border-seller-primary focus-within:ring-2 focus-within:ring-seller-primary/15">
                 <span
                   className="flex items-center gap-2 border-r border-zinc-200 bg-slate-50 px-3"
                   aria-label="India country code +91"
@@ -176,7 +176,7 @@ export function SellerRegisterForm() {
             <button
               type="submit"
               disabled={form.isLoading}
-              className="w-full rounded-lg bg-[#2563eb] py-2.5 text-sm font-semibold text-white hover:bg-[#1d4ed8] disabled:opacity-60"
+              className="w-full rounded-lg bg-seller-accent py-2.5 text-sm font-semibold text-white hover:bg-seller-accent-hover disabled:opacity-60"
             >
               {form.isLoading
                 ? "Checking..."
@@ -189,8 +189,8 @@ export function SellerRegisterForm() {
 
         {form.step === 2 && (
           <form onSubmit={handleEmail} className="space-y-4">
-            <p className="text-xs font-semibold text-[#2563eb]">Step 2 of 4</p>
-            <h3 className="text-base font-bold text-[#12325c]">
+            <p className="text-xs font-semibold text-seller-accent">Step 2 of 4</p>
+            <h3 className="text-base font-bold text-seller-navy">
               {form.emailVerified ? "Set Password" : "Verify Your Email"}
             </h3>
             <p className="text-sm text-slate-500">
@@ -203,7 +203,7 @@ export function SellerRegisterForm() {
             <ErrorMessage message={form.error ?? ""} />
             {form.error?.toLowerCase().includes("already registered as a seller") && (
               <p className="text-sm text-slate-600">
-                <Link href={`/login?email=${encodeURIComponent(form.email.trim())}&exists=1`} className="font-semibold text-[#2563eb]">
+                <Link href={`/login?email=${encodeURIComponent(form.email.trim())}&exists=1`} className="font-semibold text-seller-primary">
                   Login
                 </Link>{" "}
                 with this email instead.
@@ -256,7 +256,7 @@ export function SellerRegisterForm() {
             <button
               type="submit"
               disabled={form.isLoading}
-              className="w-full rounded-lg bg-[#2563eb] py-2.5 text-sm font-semibold text-white hover:bg-[#1d4ed8] disabled:opacity-60"
+              className="w-full rounded-lg bg-seller-accent py-2.5 text-sm font-semibold text-white hover:bg-seller-accent-hover disabled:opacity-60"
             >
               {!form.emailOtpSent
                 ? form.isLoading
@@ -272,15 +272,15 @@ export function SellerRegisterForm() {
         )}
       </div>
 
-      <div className="mt-4 flex items-start gap-2 rounded-lg bg-blue-50 px-3 py-3 text-xs text-slate-600">
-        <Lock className="mt-0.5 h-4 w-4 shrink-0 text-[#2563eb]" />
+      <div className="mt-4 flex items-start gap-2 rounded-lg bg-seller-tint px-3 py-3 text-xs text-slate-600">
+        <Lock className="mt-0.5 h-4 w-4 shrink-0 text-seller-primary" />
         Your information is safe with us. We use industry-standard encryption to
         protect your data.
       </div>
 
       <p className="mt-5 text-center text-sm text-slate-600">
         Already have an account?{" "}
-        <Link href="/login" className="font-semibold text-[#2563eb]">
+        <Link href="/login" className="font-semibold text-seller-primary">
           Login
         </Link>
       </p>

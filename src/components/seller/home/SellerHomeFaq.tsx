@@ -8,17 +8,17 @@ export function SellerHomeFaq() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <section id="faq" className="bg-[#f8fbff] py-16">
+    <section id="faq" className="bg-seller-tint py-16">
       <div className="mx-auto max-w-6xl px-4 lg:px-6">
         <div className="mb-8 flex items-end justify-between gap-4">
-          <h2 className="text-3xl font-bold text-[#12325c]">
+          <h2 className="text-3xl font-bold text-seller-navy">
             Frequently Asked Questions
           </h2>
-          <a href="#faq" className="hidden text-sm font-semibold text-[#2563eb] sm:inline">
+          <a href="#faq" className="hidden text-sm font-semibold text-seller-primary sm:inline">
             View All FAQs →
           </a>
         </div>
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="flex flex-col gap-4">
           {FAQS.map((item, index) => {
             const open = openIndex === index;
             return (
@@ -28,7 +28,7 @@ export function SellerHomeFaq() {
               >
                 <button
                   type="button"
-                  className="flex w-full items-center justify-between gap-3 px-5 py-4 text-left text-sm font-semibold text-[#12325c]"
+                  className="flex w-full items-center justify-between gap-3 px-5 py-4 text-left text-sm font-semibold text-seller-navy"
                   onClick={() => setOpenIndex(open ? null : index)}
                 >
                   {item.q}

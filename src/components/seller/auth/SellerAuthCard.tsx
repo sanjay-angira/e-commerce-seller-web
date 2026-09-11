@@ -13,10 +13,10 @@ export function SellerAuthCard({
     <div className="flex min-h-screen items-center justify-center bg-seller-muted px-4 py-12">
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
-          <p className="text-xs font-semibold uppercase tracking-widest text-seller-primary">
+          <p className="text-xs font-semibold uppercase tracking-widest text-seller-accent">
             Seller Panel
           </p>
-          <p className="mt-1 text-xl font-bold text-slate-900">Vrindavan Rasa</p>
+          <p className="mt-1 text-xl font-bold text-seller-navy">Vrindavan Rasa</p>
         </div>
 
         <div className="rounded-2xl border border-seller-border bg-white p-8">
