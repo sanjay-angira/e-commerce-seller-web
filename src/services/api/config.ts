@@ -3,7 +3,9 @@ import axios from "axios";
 import { STORAGE_KEYS } from "./storage";
 import { getNewAccessToken } from "./jwt";
 
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+export const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL ||
+  "https://e-commerce-backend-y8r8.onrender.com/backend/api";
 
 export const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
