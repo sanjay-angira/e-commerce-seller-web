@@ -155,9 +155,16 @@ export function SellerRegisterForm() {
                 </span>
                 <input
                   value={form.phone}
-                  onChange={(event) => setField("phone", event.target.value)}
-                  placeholder="98765 43210"
+                  onChange={(event) =>
+                    setField(
+                      "phone",
+                      event.target.value.replace(/\D/g, "").slice(0, 10)
+                    )
+                  }
+                  placeholder="9876543210"
                   inputMode="numeric"
+                  maxLength={10}
+                  autoComplete="tel-national"
                   className="w-full bg-white px-3 py-2.5 text-sm outline-none"
                   required
                 />

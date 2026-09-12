@@ -34,11 +34,8 @@ export function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  if (pathname === "/onboarding" && !incomplete) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
-  }
-
-  if (pathname === "/dashboard" && incomplete) {
+  // Incomplete profiles must finish onboarding before any dashboard route.
+  if (pathname.startsWith("/dashboard") && incomplete) {
     return NextResponse.redirect(new URL("/onboarding", request.url));
   }
 
