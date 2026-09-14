@@ -18,7 +18,7 @@ import {
   updateSignupField,
 } from "@/services/redux/slices/sellerSlices/sellerSignupSlice";
 
-const STEPS = ["Verify Phone", "Verify Email", "Shop Profile", "Complete"] as const;
+const STEPS = ["Verify Phone", "Email", "Set Password"] as const;
 
 export function SellerRegisterForm() {
   const dispatch = useAppDispatch();
@@ -51,23 +51,23 @@ export function SellerRegisterForm() {
 
   async function handleEmail(event: FormEvent) {
     event.preventDefault();
-    if (!form.emailVerified) {
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
-        dispatch(setSignupError("Enter a valid email address"));
-        return;
-      }
-      if (!form.emailOtpSent) {
-        await dispatch(checkSellerEmail());
-        return;
-      }
-      if (!/^[0-9]{6}$/.test(form.emailOtp)) {
-        dispatch(setSignupError("Enter the 6-digit email OTP"));
-        return;
-      }
-      dispatch(markEmailVerified());
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
+      dispatch(setSignupError("Enter a valid email address"));
       return;
     }
+    if (!form.emailOtpSent) {
+      await dispatch(checkSellerEmail());
+      return;
+    }
+    if (!/^[0-9]{6}$/.test(form.emailOtp)) {
+      dispatch(setSignupError("Enter the 6-digit email OTP"));
+      return;
+    }
+    dispatch(markEmailVerified());
+  }
 
+  async function handlePassword(event: FormEvent) {
+    event.preventDefault();
     if (form.password.length < 6) {
       dispatch(setSignupError("Password must be at least 6 characters"));
       return;
@@ -94,15 +94,15 @@ export function SellerRegisterForm() {
   }
 
   return (
-    <div className="w-full max-w-md rounded-2xl bg-white p-8 ring-1 ring-slate-100">
+    <div className="w-full rounded-2xl bg-white p-8 ring-1 ring-slate-100">
       <h2 className="text-2xl font-bold text-seller-navy">Create Your Seller Account</h2>
       <p className="mt-1 text-sm text-slate-500">
-        It&apos;s quick and easy. Follow the steps to get started.
+        Verify phone, email, and set a password. Shop profile comes after login.
       </p>
 
-      <ol className="mt-6 grid grid-cols-4 gap-2 text-center text-[11px] font-medium text-slate-400">
+      <ol className="mt-6 grid grid-cols-3 gap-2 text-center text-[11px] font-medium text-slate-400">
         {STEPS.map((label, index) => {
-          const step = (index + 1) as 1 | 2 | 3 | 4;
+          const step = (index + 1) as 1 | 2 | 3;
           const active = form.step === step;
           const done = form.step > step;
           return (
@@ -125,7 +125,7 @@ export function SellerRegisterForm() {
       <div className="mt-5 rounded-xl border border-slate-100 p-4">
         {form.step === 1 && (
           <form onSubmit={handlePhone} className="space-y-4">
-            <p className="text-xs font-semibold text-seller-accent">Step 1 of 4</p>
+            <p className="text-xs font-semibold text-seller-accent">Step 1 of 3</p>
             <h3 className="text-base font-bold text-seller-navy">
               Verify Your Phone Number
             </h3>
@@ -196,37 +196,36 @@ export function SellerRegisterForm() {
 
         {form.step === 2 && (
           <form onSubmit={handleEmail} className="space-y-4">
-            <p className="text-xs font-semibold text-seller-accent">Step 2 of 4</p>
+            <p className="text-xs font-semibold text-seller-accent">Step 2 of 3</p>
             <h3 className="text-base font-bold text-seller-navy">
-              {form.emailVerified ? "Set Password" : "Verify Your Email"}
+              Verify Your Email
             </h3>
             <p className="text-sm text-slate-500">
-              {form.emailVerified
-                ? "Create a password for your seller account, then login to continue."
-                : form.emailOtpSent
-                  ? "Enter the 6-digit OTP sent to your email."
-                  : "Enter your email. We'll send a 6-digit OTP to verify it."}
+              {form.emailOtpSent
+                ? "Enter the 6-digit OTP sent to your email."
+                : "Enter your email. We'll send a 6-digit OTP to verify it."}
             </p>
             <ErrorMessage message={form.error ?? ""} />
             {form.error?.toLowerCase().includes("already registered as a seller") && (
               <p className="text-sm text-slate-600">
-                <Link href={`/login?email=${encodeURIComponent(form.email.trim())}&exists=1`} className="font-semibold text-seller-primary">
+                <Link
+                  href={`/login?email=${encodeURIComponent(form.email.trim())}&exists=1`}
+                  className="font-semibold text-seller-primary"
+                >
                   Login
                 </Link>{" "}
                 with this email instead.
               </p>
             )}
-            {!form.emailVerified && (
-              <Input
-                label="Email"
-                type="email"
-                value={form.email}
-                onChange={(event) => setField("email", event.target.value)}
-                placeholder="seller@example.com"
-                required
-              />
-            )}
-            {form.emailOtpSent && !form.emailVerified && (
+            <Input
+              label="Email"
+              type="email"
+              value={form.email}
+              onChange={(event) => setField("email", event.target.value)}
+              placeholder="seller@example.com"
+              required
+            />
+            {form.emailOtpSent && (
               <Input
                 label="Email OTP"
                 value={form.emailOtp}
@@ -236,44 +235,55 @@ export function SellerRegisterForm() {
                 required
               />
             )}
-            {form.emailVerified && (
-              <>
-                <Input
-                  label="Password"
-                  type="password"
-                  value={form.password}
-                  onChange={(event) => setField("password", event.target.value)}
-                  leftIcon={<Lock className="h-4 w-4" />}
-                  showPasswordToggle
-                  required
-                />
-                <Input
-                  label="Confirm password"
-                  type="password"
-                  value={form.confirmPassword}
-                  onChange={(event) =>
-                    setField("confirmPassword", event.target.value)
-                  }
-                  leftIcon={<Lock className="h-4 w-4" />}
-                  showPasswordToggle
-                  required
-                />
-              </>
-            )}
             <button
               type="submit"
               disabled={form.isLoading}
               className="w-full rounded-lg bg-seller-accent py-2.5 text-sm font-semibold text-white hover:bg-seller-accent-hover disabled:opacity-60"
             >
-              {!form.emailOtpSent
-                ? form.isLoading
-                  ? "Checking..."
-                  : "Verify Email"
-                : !form.emailVerified
+              {form.isLoading
+                ? "Checking..."
+                : form.emailOtpSent
                   ? "Verify OTP"
-                  : form.isLoading
-                    ? "Creating account..."
-                    : "Set Password"}
+                  : "Verify Email"}
+            </button>
+          </form>
+        )}
+
+        {form.step === 3 && (
+          <form onSubmit={handlePassword} className="space-y-4">
+            <p className="text-xs font-semibold text-seller-accent">Step 3 of 3</p>
+            <h3 className="text-base font-bold text-seller-navy">Set Password</h3>
+            <p className="text-sm text-slate-500">
+              Create a password for your seller account. After login you can
+              complete your shop profile.
+            </p>
+            <ErrorMessage message={form.error ?? ""} />
+            <Input
+              label="Password"
+              type="password"
+              value={form.password}
+              onChange={(event) => setField("password", event.target.value)}
+              leftIcon={<Lock className="h-4 w-4" />}
+              showPasswordToggle
+              required
+            />
+            <Input
+              label="Confirm password"
+              type="password"
+              value={form.confirmPassword}
+              onChange={(event) =>
+                setField("confirmPassword", event.target.value)
+              }
+              leftIcon={<Lock className="h-4 w-4" />}
+              showPasswordToggle
+              required
+            />
+            <button
+              type="submit"
+              disabled={form.isLoading}
+              className="w-full rounded-lg bg-seller-accent py-2.5 text-sm font-semibold text-white hover:bg-seller-accent-hover disabled:opacity-60"
+            >
+              {form.isLoading ? "Creating account..." : "Create Account"}
             </button>
           </form>
         )}

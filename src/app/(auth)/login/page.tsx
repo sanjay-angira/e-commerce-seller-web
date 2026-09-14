@@ -32,8 +32,10 @@ export default function SellerLoginPage() {
             },
           ]}
         />
-        <div className="flex justify-center lg:justify-end">
-          <SellerLoginForm />
+        <div className="flex w-full justify-center lg:justify-end">
+          <div className="w-full max-w-md">
+            <SellerLoginForm />
+          </div>
         </div>
       </div>
     </SellerAuthChrome>

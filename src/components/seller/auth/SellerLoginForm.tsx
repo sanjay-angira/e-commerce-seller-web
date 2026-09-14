@@ -32,7 +32,7 @@ function SellerLoginFormFields() {
   }
 
   return (
-    <div className="w-full max-w-md rounded-2xl bg-white p-8 ring-1 ring-slate-100">
+    <div className="w-full rounded-2xl bg-white p-8 ring-1 ring-slate-100">
       <h2 className="text-2xl font-bold text-seller-navy">Seller Login</h2>
       <p className="mt-1 text-sm text-slate-500">
         Welcome back! Please login to continue.
@@ -126,7 +126,7 @@ function SellerLoginFormFields() {
 
 export function SellerLoginForm() {
   return (
-    <Suspense fallback={<div className="w-full max-w-md rounded-2xl bg-white p-8" />}>
+    <Suspense fallback={<div className="w-full rounded-2xl bg-white p-8" />}>
       <SellerLoginFormFields />
     </Suspense>
   );

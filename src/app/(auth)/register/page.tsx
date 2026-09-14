@@ -32,8 +32,10 @@ export default function SellerRegisterPage() {
             },
           ]}
         />
-        <div className="flex justify-center lg:justify-end">
-          <SellerRegisterForm />
+        <div className="flex w-full justify-center lg:justify-end">
+          <div className="w-full max-w-md">
+            <SellerRegisterForm />
+          </div>
         </div>
       </div>
     </SellerAuthChrome>

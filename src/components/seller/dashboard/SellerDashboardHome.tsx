@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronDown, Plus } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import {
   DASHBOARD_METRICS,
   METRIC_TONE,
@@ -20,25 +20,6 @@ export function SellerDashboardHome() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-seller-navy sm:text-3xl">
-            Seller Dashboard
-          </h1>
-          <p className="mt-1 text-sm text-slate-500">
-            Welcome back! Here&apos;s what&apos;s happening with your store
-            today.
-          </p>
-        </div>
-        <Link
-          href="/dashboard/products/new"
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-seller-primary px-4 py-2.5 text-sm font-semibold text-white hover:bg-seller-primary-hover"
-        >
-          <Plus className="h-4 w-4" />
-          Add Product
-        </Link>
-      </div>
-
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {DASHBOARD_METRICS.map((metric) => {
           const Icon = metric.icon;

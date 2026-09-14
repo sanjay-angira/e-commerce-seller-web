@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice, type PayloadAction } from "@reduxjs/tool
 import { API_ENDPOINTS, postData } from "@/services/api";
 import type { ApiErrorResponse } from "@/services/api/errors";
 
-export type SignupStep = 1 | 2 | 3 | 4;
+export type SignupStep = 1 | 2 | 3;
 
 export type SellerSignupState = {
   step: SignupStep;
@@ -185,6 +185,7 @@ const sellerSignupSlice = createSlice({
     },
     markEmailVerified(state) {
       state.emailVerified = true;
+      state.step = 3;
       state.error = null;
     },
     goToSignupStep(state, action: PayloadAction<SignupStep>) {
