@@ -174,7 +174,6 @@ function CategorySidebarFallback() {
     <aside className="flex h-full w-[36rem] shrink-0 flex-col overflow-hidden border-r border-slate-200 bg-white">
       <div className="shrink-0 border-b border-slate-200 px-4 py-3">
         <div className="h-4 w-24 animate-pulse rounded bg-slate-200" />
-        <div className="mt-2 h-3 w-36 animate-pulse rounded bg-slate-100" />
       </div>
       <CategorySidebarSkeleton />
     </aside>

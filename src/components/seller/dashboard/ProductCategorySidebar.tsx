@@ -36,9 +36,6 @@ export function ProductCategorySidebar({
     <aside className="flex h-full w-[36rem] shrink-0 flex-col overflow-hidden border-r border-slate-200 bg-white">
       <div className="shrink-0 border-b border-slate-200 px-4 py-3">
         <p className="text-sm font-semibold text-seller-navy">Categories</p>
-        <p className="mt-0.5 text-[11px] text-slate-500">
-          Parent · Child · Grandchild
-        </p>
       </div>
 
       {isLoading && <CategorySidebarSkeleton />}
@@ -50,7 +47,6 @@ export function ProductCategorySidebar({
       {!isLoading && !error && tree.length > 0 && (
         <div className="grid min-h-0 flex-1 grid-cols-3 divide-x divide-slate-200">
           <CategoryColumn
-            title="Parent"
             items={tree}
             activeId={selectedRoot?.id ?? null}
             hrefFor={(node) => {
@@ -59,28 +55,18 @@ export function ProductCategorySidebar({
             }}
           />
           <CategoryColumn
-            title="Child"
             items={childOptions}
             activeId={selectedChild?.id ?? null}
-            emptyText={
-              selectedRoot
-                ? "No child categories"
-                : "Select a parent"
-            }
+            emptyText={selectedRoot ? "No categories" : "Select a category"}
             hrefFor={(node) => {
               const deepest = getDeepestDefaultPath(node);
               return productsCategoryHref(deepest[deepest.length - 1].id);
             }}
           />
           <CategoryColumn
-            title="Grandchild"
             items={grandOptions}
             activeId={selectedGrand?.id ?? null}
-            emptyText={
-              selectedChild
-                ? "No grandchild categories"
-                : "Select a child"
-            }
+            emptyText={selectedChild ? "No categories" : "Select a category"}
             hrefFor={(node) => productsCategoryHref(node.id)}
           />
         </div>
@@ -103,15 +89,12 @@ export function CategorySidebarSkeleton() {
 
   return (
     <div className="grid min-h-0 flex-1 grid-cols-3 divide-x divide-slate-200">
-      {["Parent", "Child", "Grandchild"].map((title) => (
-        <div key={title} className="flex min-h-0 min-w-0 flex-col">
-          <div className="shrink-0 border-b border-slate-100 px-3 py-2">
-            <div className="h-3 w-16 animate-pulse rounded bg-slate-200" />
-          </div>
-          <div className="flex-1 space-y-2 overflow-hidden px-2 py-2">
+      {[0, 1, 2].map((column) => (
+        <div key={column} className="flex min-h-0 min-w-0 flex-col">
+          <div className="flex-1 space-y-2 overflow-hidden px-2 py-3">
             {rows.map((widthClass, index) => (
               <div
-                key={`${title}-${index}`}
+                key={`${column}-${index}`}
                 className={`h-8 animate-pulse rounded-lg bg-slate-100 ${widthClass}`}
               />
             ))}
@@ -123,13 +106,11 @@ export function CategorySidebarSkeleton() {
 }
 
 function CategoryColumn({
-  title,
   items,
   activeId,
   hrefFor,
   emptyText,
 }: {
-  title: string;
   items: CategoryTreeNode[];
   activeId: number | null;
   hrefFor: (node: CategoryTreeNode) => string;
@@ -137,11 +118,6 @@ function CategoryColumn({
 }) {
   return (
     <div className="flex min-h-0 min-w-0 flex-col">
-      <div className="shrink-0 border-b border-slate-100 px-3 py-2">
-        <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
-          {title}
-        </p>
-      </div>
       <div className="flex-1 space-y-0.5 overflow-y-auto px-2 py-2">
         {items.length === 0 && emptyText && (
           <p className="px-2 py-2 text-[11px] text-slate-400">{emptyText}</p>
