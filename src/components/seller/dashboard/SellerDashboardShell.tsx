@@ -2,8 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useState, type ReactNode } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useState, type ReactNode } from "react";
+import { useRouter } from "next/navigation";
 import {
   Bell,
   ChevronDown,
@@ -17,8 +18,15 @@ import {
   SELLER_HELP_ITEM,
   SELLER_NAV_ITEMS,
 } from "@/components/seller/dashboard/dashboard.data";
+import { ProductCategorySidebar, CategorySidebarSkeleton } from "@/components/seller/dashboard/ProductCategorySidebar";
 import { useSellerAuth } from "@/services/seller/useSellerAuth";
+import { useSellerCategories } from "@/services/seller/useSellerCategories";
 import type { Seller } from "@/types/user";
+import {
+  findCategoryPath,
+  getDefaultCategorySelection,
+  productsCategoryHref,
+} from "@/utils/categoryTree";
 
 type SellerDashboardShellProps = {
   children: ReactNode;
@@ -32,6 +40,7 @@ export function SellerDashboardShell({
   const pathname = usePathname();
   const { logout } = useSellerAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const showCategorySidebar = pathname === "/dashboard/products";
 
   const shopLabel = seller.shopName?.trim() || "Your Store";
   const sellerName =
@@ -111,13 +120,19 @@ export function SellerDashboardShell({
       </header>
 
       <div className="flex min-h-0 min-w-0 flex-1 overflow-hidden">
-        {/* Desktop sidebar — fixed in place, does not scroll */}
         <aside className="hidden h-full w-64 shrink-0 flex-col overflow-hidden bg-seller-navy text-white lg:flex">
           <SidebarNav pathname={pathname} onNavigate={() => undefined} />
           <SidebarFooter onLogout={() => void logout()} />
         </aside>
 
-        {/* Mobile drawer */}
+        {showCategorySidebar && (
+          <div className="hidden h-full shrink-0 lg:flex">
+            <Suspense fallback={<CategorySidebarFallback />}>
+              <ProductsCategoryRail />
+            </Suspense>
+          </div>
+        )}
+
         {mobileOpen && (
           <div className="fixed inset-0 z-50 lg:hidden">
             <button
@@ -154,6 +169,44 @@ export function SellerDashboardShell({
   );
 }
 
+function CategorySidebarFallback() {
+  return (
+    <aside className="flex h-full w-[36rem] shrink-0 flex-col overflow-hidden border-r border-slate-200 bg-white">
+      <div className="shrink-0 border-b border-slate-200 px-4 py-3">
+        <div className="h-4 w-24 animate-pulse rounded bg-slate-200" />
+        <div className="mt-2 h-3 w-36 animate-pulse rounded bg-slate-100" />
+      </div>
+      <CategorySidebarSkeleton />
+    </aside>
+  );
+}
+
+function ProductsCategoryRail() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const { tree, isLoading, error } = useSellerCategories();
+  const categoryId = Number(searchParams.get("category") || 0) || null;
+  const path = categoryId ? findCategoryPath(tree, categoryId) : [];
+  const defaultPath = getDefaultCategorySelection(tree);
+  const defaultId = defaultPath[defaultPath.length - 1]?.id ?? null;
+
+  useEffect(() => {
+    if (isLoading || !defaultId) return;
+    if (!categoryId || path.length === 0) {
+      router.replace(productsCategoryHref(defaultId));
+    }
+  }, [categoryId, defaultId, isLoading, path.length, router]);
+
+  return (
+    <ProductCategorySidebar
+      tree={tree}
+      selectedCategoryId={categoryId}
+      isLoading={isLoading}
+      error={error}
+    />
+  );
+}
+
 function SidebarNav({
   pathname,
   onNavigate,
@@ -162,7 +215,7 @@ function SidebarNav({
   onNavigate: () => void;
 }) {
   return (
-    <nav className="flex-1 space-y-1 overflow-hidden px-3 py-4">
+    <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
       {SELLER_NAV_ITEMS.map((item) => {
         const active =
           item.href === "/dashboard"

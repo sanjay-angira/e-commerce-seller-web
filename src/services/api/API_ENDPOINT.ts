@@ -12,6 +12,9 @@ export const API_ENDPOINTS = {
     GET: "seller/profile",
     UPDATE: "seller/profile",
   },
+  CATEGORIES: {
+    LIST: "customer/categories",
+  },
 } as const;
 
 export default API_ENDPOINTS;
